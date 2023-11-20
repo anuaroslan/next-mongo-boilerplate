@@ -1,10 +1,24 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Link from "next/link";
+
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import toast from "react-hot-toast";
+import { notifications } from "@mantine/notifications";
+import styled from "@emotion/styled";
+import {
+  Title,
+  Paper,
+  Text,
+  TextInput,
+  Group,
+  Anchor,
+  Center,
+  rem,
+  Box,
+  Button,
+} from "@mantine/core";
+import { IconArrowLeft } from "@tabler/icons-react";
 
 const ForgotPasswordPage = () => {
   const router = useRouter();
@@ -29,48 +43,74 @@ const ForgotPasswordPage = () => {
       setLoading(true);
       const response = await axios.post("/api/users/forgotpassword", user);
       console.log("Reset email sent successfully", response.data);
-      toast.success("Reset email sent");
+      notifications.show({
+        title: "Request successful",
+        message: "Please check your email!",
+      });
       router.push("/login");
     } catch (error: any) {
       console.log("Reset failed", error.message);
-      toast.error(error.message);
+      notifications.show({
+        title: "Error",
+        message: "Please check your email",
+        color: "red",
+      });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2">
-      <h1>{loading ? "Processing" : "Forgot password"}</h1>
-      <hr />
+    <>
+      <Wrapper>
+        <StyledTitle ta="center">Forgot your password?</StyledTitle>
+        <Text c="dimmed" fz="sm" ta="center">
+          Enter your email to get a reset link
+        </Text>
 
-      <label htmlFor="email">email</label>
-      <input
-        className="p-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:border-gray-600 text-black"
-        id="email"
-        type="text"
-        value={user.email}
-        onChange={(e) => setUser({ ...user, email: e.target.value })}
-        placeholder="email"
-      />
-      {buttonDisabled ? (
-        <button
-          disabled={true}
-          className="p-2 bg-red-500 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:border-gray-600"
-        >
-          Submit
-        </button>
-      ) : (
-        <button
-          onClick={onResetPassword}
-          className="p-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:border-gray-600"
-        >
-          Submit
-        </button>
-      )}
-      <Link href="/login">Visit login page</Link>
-    </div>
+        <Paper withBorder shadow="md" p={30} radius="md" mt="xl">
+          <TextInput
+            label="Your email"
+            placeholder="me@mantine.dev"
+            required
+            value={user.email}
+            onChange={(e) => setUser({ ...user, email: e.target.value })}
+          />
+          <Group justify="space-between" mt="lg">
+            <Anchor c="dimmed" size="sm">
+              <Center inline>
+                <IconArrowLeft
+                  style={{ width: rem(12), height: rem(12) }}
+                  stroke={1.5}
+                />
+                <Box ml={5} onClick={() => router.push("/login")}>
+                  Back to the login page
+                </Box>
+              </Center>
+            </Anchor>
+            <Button onClick={onResetPassword} loading={loading}>
+              Reset password
+            </Button>
+          </Group>
+        </Paper>
+      </Wrapper>
+    </>
   );
 };
 
 export default ForgotPasswordPage;
+
+const Wrapper = styled.div`
+  min-height: rem(900px);
+  background-size: cover;
+  // background-image: url(https://images.unsplash.com/photo-1484242857719-4b9144542727?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1280&q=80);
+`;
+
+const StyledTitle = styled(Title)`
+  font-size: rem(26px);
+  font-weight: 900;
+  font-family: Greycliff CF, var(--mantine-font-family);
+`;
+
+
+

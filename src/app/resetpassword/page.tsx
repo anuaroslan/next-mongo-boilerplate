@@ -6,6 +6,18 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useSearchParams } from "next/navigation";
+import styled from "@emotion/styled";
+
+import {
+  Paper,
+  Title,
+  TextInput,
+  PasswordInput,
+  Button,
+  Anchor,
+  Text,
+} from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 
 const ResetPasswordPage = () => {
   const router = useRouter();
@@ -50,65 +62,89 @@ const ResetPasswordPage = () => {
 
         const response = await axios.put("/api/users/resetpassword", user);
         console.log("Reset success", response.data);
+        notifications.show({
+          title: "Reset successful",
+          message: "Redirecting...",
+        });
 
-        toast.success("Password updated successfully");
-        // router.push("/login");
+        router.push("/login");
       } else {
-        toast.error("Password does not match!");
-        window.alert("Password does not match!");
+        notifications.show({
+          title: "Reset failed",
+          message: "Password does not match!",
+          color: "red",
+        });
       }
     } catch (error: any) {
       console.log("Reset failed", error.message);
-      toast.error(error.message);
+      notifications.show({
+        title: "Reset failed",
+        message: error.message,
+        color: "red",
+      });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2">
-      <h1>{loading ? "Processing" : "Reset password"}</h1>
-      <hr />
+    <>
+      <Wrapper>
+        <Paper radius={0} p={30}>
+          <Title order={2} ta="center" mt="md" mb={0}>
+            Hi {data.username}, please enter your new password
+          </Title>
+          <Text ta="center" mt="sm" mb={30}>
+            Not you?{" "}
+            <Anchor<"a"> href="/forgotpassword" fw={700}>
+              Change user
+            </Anchor>
+          </Text>
+          <PasswordInput
+            label="New password"
+            placeholder="Your new password"
+            mt="md"
+            size="md"
+            value={user.password}
+            onChange={(e) => setUser({ ...user, password: e.target.value })}
+          />
+          <PasswordInput
+            label="Confirm password"
+            placeholder="confirm password"
+            mt="md"
+            size="md"
+            value={user.confirmPassword}
+            onChange={(e) =>
+              setUser({ ...user, confirmPassword: e.target.value })
+            }
+          />
+          <Button
+            fullWidth
+            mt="xl"
+            size="md"
+            loading={loading}
+            onClick={onResetPassword}
+          >
+            Reset
+          </Button>
 
-      <h1>email: {data?.email}</h1>
-      <label htmlFor="password">password</label>
-
-      <input
-        className="p-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:border-gray-600 text-black"
-        id="password"
-        type="password"
-        value={user.password}
-        onChange={(e) => setUser({ ...user, password: e.target.value })}
-        placeholder="password"
-      />
-      <label htmlFor="password">confirm password</label>
-      <input
-        className="p-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:border-gray-600 text-black"
-        id="confirmPassword"
-        type="password"
-        value={user.confirmPassword}
-        onChange={(e) => setUser({ ...user, confirmPassword: e.target.value })}
-        placeholder="confirm password"
-      />
-      {buttonDisabled ? (
-        <button
-          disabled={true}
-          className="p-2 bg-red-500 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:border-gray-600"
-        >
-          Submit
-        </button>
-      ) : (
-        <button
-          onClick={() => {
-            onResetPassword();
-          }}
-          className="p-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:border-gray-600"
-        >
-          Submit
-        </button>
-      )}
-    </div>
+          <Text ta="center" mt="sm">
+            Don&apos;t have an account?{" "}
+            <Anchor<"a"> href="/signup" fw={700}>
+              Register
+            </Anchor>
+          </Text>
+        </Paper>
+      </Wrapper>
+    </>
   );
 };
 
 export default ResetPasswordPage;
+
+const Wrapper = styled.div`
+  min-height: rem(900px);
+  background-size: cover;
+  background-image: url(https://images.unsplash.com/photo-1484242857719-4b9144542727?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1280&q=80);
+`;
+

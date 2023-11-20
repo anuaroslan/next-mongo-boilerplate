@@ -5,6 +5,7 @@ import { theme } from "../../theme";
 import { HeaderMegaMenu } from "@/components/Header/HeaderMegaMenu";
 import { Notifications } from "@mantine/notifications";
 import "@mantine/notifications/styles.css";
+import { FooterSimple } from "@/components/Footer/Footer";
 
 export const metadata = {
   title: "Mantine Next.js template",
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: { children: any }) {
 
           <HeaderMegaMenu />
           <Container size={"md"}>{children}</Container>
+          <FooterSimple />
         </MantineProvider>
       </body>
     </html>

@@ -9,8 +9,8 @@ connect();
 export async function PUT(request: NextRequest) {
   try {
     const reqBody = await request.json();
-    const { token, password, username, email } = reqBody;
-    console.log(token, password, username, email);
+    const { token, password } = reqBody;
+    
 
     const user = await User.findOne({
       forgotPasswordToken: token,

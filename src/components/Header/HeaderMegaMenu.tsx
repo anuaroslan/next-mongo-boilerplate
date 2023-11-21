@@ -81,7 +81,7 @@ export function HeaderMegaMenu({ myCookieValue }: { myCookieValue: any }) {
     try {
       const fetchData = async () => {
         const res = await axios.get("/api/users/me");
-        console.log(res.data);
+
         setData(res.data.data);
         setIsLogged(true);
       };

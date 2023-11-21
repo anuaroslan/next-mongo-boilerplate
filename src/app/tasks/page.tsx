@@ -17,7 +17,8 @@ import {
 import { IconCheck, IconPencil, IconTrash } from "@tabler/icons-react";
 
 import dayjs from "dayjs";
-import { useDisclosure } from "@mantine/hooks";
+import { useDisclosure as useDisclosureCreate } from "@mantine/hooks";
+import { useDisclosure as useDisclosureUpdate } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
@@ -33,7 +34,15 @@ interface Task {
 
 const TasksPage = () => {
   const [loading, setLoading] = useState(false);
-  const [opened, { open, close }] = useDisclosure(false);
+  const [
+    createModalopened,
+    { open: createModalOpen, close: createModalClose },
+  ] = useDisclosureCreate(false);
+  const [
+    updateModalopened,
+    { open: updateModalOpen, close: updateModalClose },
+  ] = useDisclosureUpdate(false);
+
   const [tasksData, setTasksData] = useState<Task[]>([]);
 
   const [task, setTask] = useState({
@@ -42,11 +51,19 @@ const TasksPage = () => {
     description: "",
   });
 
+  const [updatedTask, setUpdatedTask] = useState({
+    id: "",
+    taskName: "",
+    description: "",
+    status: false, // Add this line
+    createdAt: new Date(), // Add this line
+  });
+  const [selectedTaskId, setSelectedTaskId] = useState("");
+
   useEffect(() => {
     try {
       const fetchData = async () => {
         const res = await axios.get("/api/tasks");
-        console.log("get request", res.data);
         setTasksData(res.data.data);
       };
       fetchData().catch(console.error);
@@ -59,14 +76,13 @@ const TasksPage = () => {
     try {
       setLoading(true);
       const response = await axios.post("/api/tasks", task);
-      console.log("Task created", response.data);
       notifications.show({
         title: "Task created",
         message: "",
       });
       setTasksData((prevTasks) => [...prevTasks, response.data.data]);
 
-      close();
+      createModalClose();
       setTask({
         id: "",
         taskName: "",
@@ -79,6 +95,47 @@ const TasksPage = () => {
         color: "red",
       });
       console.log("Task creation failed", error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateTask = async () => {
+    try {
+      setLoading(true);
+
+      // Assuming taskId, taskName, and description are defined
+      const updatedTaskData = {
+        taskId: selectedTaskId,
+        taskName: updatedTask.taskName,
+        description: updatedTask.description,
+        status: updatedTask.status,
+        createdAt: updatedTask.createdAt,
+      };
+
+      const response = await axios.put("/api/tasks", updatedTaskData);
+
+      notifications.show({
+        title: "Task updated",
+        message: "",
+      });
+
+      // Update the tasksData state with the updated task
+      setTasksData((prevTasks) =>
+        prevTasks.map((task) =>
+          task.id === selectedTaskId ? response.data.updatedTask : task
+        )
+      );
+
+      updateModalClose();
+    } catch (error: any) {
+      notifications.show({
+        title: "Failed",
+        message: "Please try again.",
+        color: "red",
+      });
+
+      console.log("Task update failed", error.message);
     } finally {
       setLoading(false);
     }
@@ -113,7 +170,7 @@ const TasksPage = () => {
     <>
       <Group justify="space-between">
         <Title order={1}>Tasks</Title>
-        <Button onClick={open}>Add Task</Button>
+        <Button onClick={createModalOpen}>Add Task</Button>
       </Group>
       <Table.ScrollContainer minWidth={800}>
         <Table verticalSpacing="sm">
@@ -131,13 +188,7 @@ const TasksPage = () => {
               <Table.Tr key={data?.id}>
                 <Table.Td>
                   {data?.status ? (
-                    <ActionIcon
-                      variant="filled"
-                      color="green"
-                      radius="xl"
-                      aria-label="Settings"
-                      // onClick={}
-                    >
+                    <ActionIcon variant="subtle" color="gray">
                       <IconCheck
                         style={{ width: rem(16), height: rem(16) }}
                         stroke={1.5}
@@ -168,7 +219,23 @@ const TasksPage = () => {
                 </Table.Td>
                 <Table.Td>
                   <Group gap={0} justify="flex-end">
-                    <ActionIcon variant="subtle" color="gray">
+                    <ActionIcon
+                      variant="subtle"
+                      color="gray"
+                      onClick={() => {
+                        // Open update modal and set the selectedTaskId
+                        updateModalOpen();
+                        setSelectedTaskId(data._id);
+                        // Set the updatedTask state with the current task data
+                        setUpdatedTask({
+                          id: data.id,
+                          taskName: data.taskName,
+                          description: data.description,
+                          createdAt: data.createdAt,
+                          status: data.status,
+                        });
+                      }}
+                    >
                       <IconPencil
                         style={{ width: rem(16), height: rem(16) }}
                         stroke={1.5}
@@ -191,13 +258,13 @@ const TasksPage = () => {
           </Table.Tbody>
         </Table>
       </Table.ScrollContainer>
-      <Modal opened={opened} onClose={close}>
+      <Modal opened={createModalopened} onClose={createModalClose}>
         <div>
           <Text fz="lg" fw={500}>
-            Configure notifications
+            Create a task
           </Text>
           <Text fz="xs" c="dimmed" mt={3} mb="xl">
-            Choose what notifications you want to receive
+            Enter the task you want to have
           </Text>
           <Stack>
             <TextInput
@@ -215,10 +282,44 @@ const TasksPage = () => {
               }
             />
             <Group justify="flex-end" mt={5}>
-              <Button color="gray" onClick={close}>
+              <Button color="gray" onClick={createModalClose}>
                 Cancel
               </Button>
               <Button onClick={createTask}>Add Task</Button>
+            </Group>
+          </Stack>
+        </div>
+      </Modal>
+      <Modal opened={updateModalopened} onClose={updateModalClose}>
+        <div>
+          <Text fz="lg" fw={500}>
+            Update a task
+          </Text>
+          <Text fz="xs" c="dimmed" mt={3} mb="xl">
+            Enter the task you want to have
+          </Text>
+          <Stack>
+            <TextInput
+              label="Task Name"
+              placeholder="Eat"
+              value={updatedTask.taskName}
+              onChange={(e) =>
+                setUpdatedTask({ ...updatedTask, taskName: e.target.value })
+              }
+            />
+            <Textarea
+              label="Description"
+              placeholder="Make yourself a nice steak."
+              value={updatedTask.description}
+              onChange={(e) =>
+                setUpdatedTask({ ...updatedTask, description: e.target.value })
+              }
+            />
+            <Group justify="flex-end" mt={5}>
+              <Button color="gray" onClick={updateModalClose}>
+                Cancel
+              </Button>
+              <Button onClick={updateTask}>Update Task</Button>
             </Group>
           </Stack>
         </div>

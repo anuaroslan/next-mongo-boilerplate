@@ -1,5 +1,8 @@
 import { connect } from "@/dbConfig/dbConfig";
+import { checkIfTaskBelongsToUser } from "@/helpers/checkIfTaskBelongsToUser";
+import { getDataFromToken } from "@/helpers/getDataFromToken";
 import Task from "@/models/taskModel";
+import User from "@/models/userModel";
 import { NextRequest, NextResponse } from "next/server";
 
 connect();
@@ -21,6 +24,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const userId = await getDataFromToken(request);
+
     const reqBody = await request.json();
     const { taskName, description } = reqBody;
     const createdAt = new Date().toISOString();
@@ -29,6 +34,7 @@ export async function POST(request: NextRequest) {
       taskName,
       description,
       createdAt,
+      userId,
     });
 
     const savedTask = await newTask.save();
@@ -43,6 +49,50 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function PUT(request: NextRequest) {
+  try {
+    // Read the request body only once
+    const reqBody = await request.json();
+    const { taskId, taskName, description } = reqBody;
+    const updatedAt = new Date().toISOString();
+
+    // Check if the task belongs to the user
+    // if (!(await checkIfTaskBelongsToUser(request))) {
+    //   return NextResponse.json(
+    //     { error: "Task does not belong to the user" },
+    //     { status: 403 }
+    //   );
+    // }
+
+    // Find the existing task by ID
+    const existingTask = await Task.findById(taskId);
+
+    // if (!existingTask) {
+    //   return NextResponse.json({ error: "Task not found" }, { status: 404 });
+    // }
+
+    // Update the task properties
+    existingTask.taskName = taskName;
+    existingTask.description = description;
+    existingTask.updatedAt = updatedAt;
+
+    // Save the updated task
+    const updatedTask = await existingTask.save();
+    console.log(updatedTask);
+
+    return NextResponse.json({
+      message: "Task updated successfully",
+      success: true,
+      updatedTask,
+    });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+
+
 
 export async function DELETE(request: NextRequest) {
   try {

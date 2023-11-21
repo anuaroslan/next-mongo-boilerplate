@@ -50,7 +50,7 @@ export default function ProfilePage() {
           {data.email} • {data._id}
         </Text>
 
-        <Button fullWidth mt="md">
+        <Button fullWidth mt="md" onClick={() => router.push("/tasks")}>
           View task
         </Button>
         <Flex mt={10} justify="center">

@@ -38,7 +38,7 @@ export function FooterSimple() {
 const Footer = styled.div`
   margin-top: rem(120px);
   border-top: rem(1px) solid
-    light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
+  background-color: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5)); 
   position: absolute;
   bottom: 0;
   width: 100%;
@@ -59,3 +59,4 @@ const Links = styled(Group)`
     margin-top: var(--mantine-spacing-md);
   }
 `;
+

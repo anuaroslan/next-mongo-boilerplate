@@ -1,32 +1,36 @@
 "use client";
-import { Table, Group, Text, ActionIcon, Anchor, rem } from "@mantine/core";
+import {
+  Table,
+  Group,
+  Text,
+  ActionIcon,
+  Anchor,
+  rem,
+  Loader,
+} from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconCheck, IconPencil, IconTrash } from "@tabler/icons-react";
 import axios from "axios";
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
+import dayjs from "dayjs";
 interface Task {
   taskName: string;
   description: string;
 }
 
 export function TaskTable({ data }: { data: any }) {
-  const [isCompleted, setIsCompleted] = useState();
-
-  console.log("data from table", data);
+  const [loading, setLoading] = useState(false);
 
   const deleteTask = async (taskId: string) => {
     try {
-      // setLoading(true);
+      setLoading(true);
       const response = await axios.delete("/api/tasks", {
         data: { taskId }, // Send the task ID in the request body
       });
-      console.log("Task deleted", response.data);
       notifications.show({
         title: "Task deleted",
         message: "",
       });
-      // Additional logic as needed after successful deletion
     } catch (error: any) {
       notifications.show({
         title: "Failed",
@@ -35,7 +39,7 @@ export function TaskTable({ data }: { data: any }) {
       });
       console.log("Task deletion failed", error.message);
     } finally {
-      // setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -74,7 +78,7 @@ export function TaskTable({ data }: { data: any }) {
         <Text>{data.description}</Text>
       </Table.Td>
       <Table.Td>
-        <Text fz="sm">{data.createdAt}</Text>
+        <Text fz="sm">{dayjs(data.createdAt).format("HH:mm DD MMM YYYY")}</Text>
       </Table.Td>
       <Table.Td>
         <Group gap={0} justify="flex-end">

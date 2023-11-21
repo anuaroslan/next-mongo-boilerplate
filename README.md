@@ -20,5 +20,10 @@ yarn dev
 pnpm dev
 ```
 
+## Todo
+
+1. Fix header middleware.
+2. Add CMS function to home.
+
 - Add your repo link here
 - # next-mongo-boilerplate

@@ -22,6 +22,8 @@
     "@tabler/icons-react": "^2.41.0",
     "axios": "^1.6.2",
     "bcryptjs": "^2.4.3",
+    "cookie-cutter": "^0.2.0",
+    "cookies-js": "^1.2.3",
     "dayjs": "^1.11.10",
     "embla-carousel-react": "^8.0.0-rc14",
     "jsonwebtoken": "^9.0.2",

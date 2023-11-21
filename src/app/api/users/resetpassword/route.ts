@@ -10,7 +10,6 @@ export async function PUT(request: NextRequest) {
   try {
     const reqBody = await request.json();
     const { token, password } = reqBody;
-    
 
     const user = await User.findOne({
       forgotPasswordToken: token,
@@ -21,7 +20,6 @@ export async function PUT(request: NextRequest) {
     const salt = await bcryptjs.genSalt(10);
     const hashedPassword = await bcryptjs.hash(password, salt);
 
-    user.isVerified = true; //remove
     user.forgotPasswordToken = undefined;
     user.forgotPasswordTokenExpiry = undefined;
     user.password = hashedPassword;

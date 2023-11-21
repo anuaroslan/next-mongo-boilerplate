@@ -28,6 +28,7 @@ const LoginPage = () => {
       setLoading(true);
       const response = await axios.post("/api/users/login", user);
       console.log("Login success", response.data);
+      console.log("Response", response);
       notifications.show({
         title: "Login successful",
         message: "Redirecting...",

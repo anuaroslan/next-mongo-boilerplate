@@ -21,6 +21,7 @@ import {
 } from "@mantine/core";
 import { MantineLogo } from "@mantine/ds";
 
+
 import {
   IconNotification,
   IconCode,
@@ -34,8 +35,6 @@ import classes from "./HeaderMegaMenu.module.css";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import { NextRequest } from "next/server";
-import toast from "react-hot-toast";
 
 const mockdata = [
   {
@@ -70,7 +69,7 @@ const mockdata = [
   },
 ];
 
-export function HeaderMegaMenu() {
+export function HeaderMegaMenu({ myCookieValue }: { myCookieValue: any }) {
   const theme = useMantineTheme();
   const router = useRouter();
   const [drawerOpened, setDrawerOpened] = useState(false);
@@ -88,29 +87,19 @@ export function HeaderMegaMenu() {
       };
       fetchData().catch(console.error);
     } catch (error: any) {
-      console.log(error.message);
       setIsLogged(false);
+      console.log(error.message);
     }
-  }, []);
+  }, [isLogged, setIsLogged]);
 
   const onLogout = async () => {
     try {
       await axios.get("/api/users/logout");
-      toast.success("Logout successful");
-      router.push("/login");
       setIsLogged(false);
+      router.push("/login");
     } catch (error: any) {
       console.log(error.message);
-      toast.error(error.message);
     }
-  };
-
-  const onLogin = () => {
-    router.push("/login");
-  };
-
-  const onSignUp = () => {
-    router.push("/signup");
   };
 
   const links = mockdata.map((item) => (
@@ -213,10 +202,10 @@ export function HeaderMegaMenu() {
             </Group>
           ) : (
             <Group visibleFrom="sm">
-              <Button variant="default" onClick={onLogin}>
+              <Button variant="default" onClick={() => router.push("/login")}>
                 Log in
               </Button>
-              <Button onClick={onSignUp}>Sign up</Button>
+              <Button onClick={onLogout}>Sign up</Button>
             </Group>
           )}
 

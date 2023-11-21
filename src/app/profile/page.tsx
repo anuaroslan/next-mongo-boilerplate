@@ -4,7 +4,7 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { Paper, Avatar, Button, Text } from "@mantine/core";
+import { Paper, Avatar, Button, Text, Group, Flex } from "@mantine/core";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -50,9 +50,14 @@ export default function ProfilePage() {
           {data.email} • {data._id}
         </Text>
 
-        <Button variant="default" fullWidth mt="md">
+        <Button fullWidth mt="md">
           View task
         </Button>
+        <Flex mt={10} justify="center">
+          <Button variant="light" color="white" onClick={logout}>
+            Log out
+          </Button>
+        </Flex>
       </Paper>
     </>
   );

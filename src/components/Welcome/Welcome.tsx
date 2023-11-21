@@ -1,9 +1,10 @@
 import { Title, Text, Anchor } from "@mantine/core";
 import classes from "./Welcome.module.css";
+import styled from "@emotion/styled";
 
 export function Welcome() {
   return (
-    <>
+    <Wrapper>
       <Title className={classes.title} ta="center" mt={100}>
         Welcome to{" "}
         <Text
@@ -24,6 +25,10 @@ export function Welcome() {
         </Anchor>
         . To get started edit page.tsx file.
       </Text>
-    </>
+    </Wrapper>
   );
 }
+
+const Wrapper = styled.div`
+  height: 100%;
+`;

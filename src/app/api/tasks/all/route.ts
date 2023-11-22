@@ -58,20 +58,8 @@ export async function PUT(request: NextRequest) {
     const { taskId, taskName, description, status, priority } = reqBody;
     const updatedAt = new Date().toISOString();
 
-    // Check if the task belongs to the user
-    // if (!(await checkIfTaskBelongsToUser(request))) {
-    //   return NextResponse.json(
-    //     { error: "Task does not belong to the user" },
-    //     { status: 403 }
-    //   );
-    // }
-
     // Find the existing task by ID
     const existingTask = await Task.findById(taskId);
-
-    // if (!existingTask) {
-    //   return NextResponse.json({ error: "Task not found" }, { status: 404 });
-    // }
 
     // Update the task properties
     existingTask.taskName = taskName;

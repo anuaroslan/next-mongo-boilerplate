@@ -15,6 +15,7 @@
     "@mantine/code-highlight": "^7.2.2",
     "@mantine/core": "^7.2.2",
     "@mantine/dates": "^7.2.2",
+    "@mantine/dropzone": "^7.2.2",
     "@mantine/ds": "^7.2.2",
     "@mantine/form": "^7.2.2",
     "@mantine/hooks": "^7.2.2",
@@ -33,6 +34,7 @@
     "react": "^18",
     "react-dom": "^18",
     "react-hot-toast": "^2.4.1",
+    "react-query": "^3.39.3",
     "swr": "^2.2.4"
   },
   "devDependencies": {

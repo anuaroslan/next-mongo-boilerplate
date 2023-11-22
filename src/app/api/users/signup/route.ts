@@ -33,6 +33,7 @@ export async function POST(request: NextRequest) {
       email,
       password: hashedPassword,
       createdAt,
+      image: "",
     });
 
     const savedUser = await newUser.save();

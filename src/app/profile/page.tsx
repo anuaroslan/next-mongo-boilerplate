@@ -4,7 +4,17 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { Paper, Avatar, Button, Text, Group, Flex } from "@mantine/core";
+import {
+  Paper,
+  Avatar,
+  Button,
+  Text,
+  Group,
+  Flex,
+  Anchor,
+  Container,
+} from "@mantine/core";
+import dayjs from "dayjs";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -35,7 +45,7 @@ export default function ProfilePage() {
   }, []);
 
   return (
-    <>
+    <Container size={"xs"}>
       <Paper radius="md" withBorder p="lg" bg="var(--mantine-color-body)">
         <Avatar
           src="https://picsum.photos/200/300?random=1"
@@ -47,18 +57,17 @@ export default function ProfilePage() {
           {data.username}
         </Text>
         <Text ta="center" c="dimmed" fz="sm">
-          {data.email} • {data._id}
+          {data.email} • User created{" "}
+          {dayjs(data.createdAt).format("DD MMM YYYY")}
         </Text>
 
         <Button fullWidth mt="md" onClick={() => router.push("/tasks")}>
           View task
         </Button>
         <Flex mt={10} justify="center">
-          <Button variant="light" color="white" onClick={logout}>
-            Log out
-          </Button>
+          <Anchor onClick={logout}>Log out</Anchor>
         </Flex>
       </Paper>
-    </>
+    </Container>
   );
 }

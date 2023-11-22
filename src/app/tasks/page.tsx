@@ -13,8 +13,17 @@ import {
   ActionIcon,
   Anchor,
   rem,
+  Switch,
+  Checkbox,
 } from "@mantine/core";
-import { IconCheck, IconPencil, IconTrash } from "@tabler/icons-react";
+import {
+  IconCheck,
+  IconCircle,
+  IconLineDashed,
+  IconPencil,
+  IconTrash,
+  IconX,
+} from "@tabler/icons-react";
 
 import dayjs from "dayjs";
 import { useDisclosure as useDisclosureCreate } from "@mantine/hooks";
@@ -30,7 +39,16 @@ interface Task {
   status: boolean;
   _id: string;
   createdAt: Date;
+  updatedAt: Date;
 }
+
+const checkIcon = (
+  <IconCheck
+    style={{ width: rem(16), height: rem(16) }}
+    stroke={2.5}
+    color="green"
+  />
+);
 
 const TasksPage = () => {
   const [loading, setLoading] = useState(false);
@@ -49,6 +67,7 @@ const TasksPage = () => {
     id: "",
     taskName: "",
     description: "",
+    updatedAt: "",
   });
 
   const [updatedTask, setUpdatedTask] = useState({
@@ -87,6 +106,7 @@ const TasksPage = () => {
         id: "",
         taskName: "",
         description: "",
+        updatedAt: "",
       });
     } catch (error: any) {
       notifications.show({
@@ -180,6 +200,7 @@ const TasksPage = () => {
               <Table.Th>Task</Table.Th>
               <Table.Th>Description</Table.Th>
               <Table.Th>Created at</Table.Th>
+              <Table.Th>Updated at</Table.Th>
               <Table.Th />
             </Table.Tr>
           </Table.Thead>
@@ -188,24 +209,38 @@ const TasksPage = () => {
               <Table.Tr key={data?.id}>
                 <Table.Td>
                   {data?.status ? (
-                    <ActionIcon variant="subtle" color="gray">
-                      <IconCheck
-                        style={{ width: rem(16), height: rem(16) }}
-                        stroke={1.5}
-                      />
-                    </ActionIcon>
+                    <IconCheck
+                      style={{ width: rem(16), height: rem(16) }}
+                      stroke={1.5}
+                      color="green"
+                    />
                   ) : (
-                    <ActionIcon
-                      variant="filled"
+                    <IconX
+                      style={{ width: rem(16), height: rem(16) }}
+                      stroke={1.5}
                       color="gray"
-                      radius="xl"
-                      aria-label="Settings"
-                    ></ActionIcon>
+                    />
                   )}
                 </Table.Td>
 
                 <Table.Td>
-                  <Anchor component="button" size="sm">
+                  <Anchor
+                    component="button"
+                    size="sm"
+                    onClick={() => {
+                      // Open update modal and set the selectedTaskId
+                      updateModalOpen();
+                      setSelectedTaskId(data._id);
+                      // Set the updatedTask state with the current task data
+                      setUpdatedTask({
+                        id: data.id,
+                        taskName: data.taskName,
+                        description: data.description,
+                        createdAt: data.createdAt,
+                        status: data.status,
+                      });
+                    }}
+                  >
                     {data?.taskName}
                   </Anchor>
                 </Table.Td>
@@ -215,6 +250,11 @@ const TasksPage = () => {
                 <Table.Td>
                   <Text fz="sm">
                     {dayjs(data?.createdAt).format("HH:mm DD MMM YYYY")}
+                  </Text>
+                </Table.Td>
+                <Table.Td>
+                  <Text fz="sm">
+                    {dayjs(data?.updatedAt).format("HH:mm DD MMM YYYY")}
                   </Text>
                 </Table.Td>
                 <Table.Td>
@@ -315,6 +355,20 @@ const TasksPage = () => {
                 setUpdatedTask({ ...updatedTask, description: e.target.value })
               }
             />
+            <Group>
+              <Text>Status</Text>
+              <Switch
+                size="lg"
+                color="gray"
+                onLabel={checkIcon}
+                offLabel=""
+                checked={updatedTask.status}
+                onChange={(e) =>
+                  setUpdatedTask({ ...updatedTask, status: e.target.checked })
+                }
+              />
+            </Group>
+
             <Group justify="flex-end" mt={5}>
               <Button color="gray" onClick={updateModalClose}>
                 Cancel

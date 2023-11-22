@@ -54,7 +54,7 @@ export async function PUT(request: NextRequest) {
   try {
     // Read the request body only once
     const reqBody = await request.json();
-    const { taskId, taskName, description } = reqBody;
+    const { taskId, taskName, description, status } = reqBody;
     const updatedAt = new Date().toISOString();
 
     // Check if the task belongs to the user
@@ -76,6 +76,7 @@ export async function PUT(request: NextRequest) {
     existingTask.taskName = taskName;
     existingTask.description = description;
     existingTask.updatedAt = updatedAt;
+    existingTask.status = status;
 
     // Save the updated task
     const updatedTask = await existingTask.save();

@@ -15,6 +15,7 @@ import {
   rem,
   Switch,
   Checkbox,
+  Rating,
 } from "@mantine/core";
 import {
   IconCheck,
@@ -24,7 +25,6 @@ import {
   IconTrash,
   IconX,
 } from "@tabler/icons-react";
-
 import dayjs from "dayjs";
 import { useDisclosure as useDisclosureCreate } from "@mantine/hooks";
 import { useDisclosure as useDisclosureUpdate } from "@mantine/hooks";
@@ -40,6 +40,7 @@ interface Task {
   _id: string;
   createdAt: Date;
   updatedAt: Date;
+  priority: number;
 }
 
 const checkIcon = (
@@ -68,33 +69,48 @@ const TasksPage = () => {
     taskName: "",
     description: "",
     updatedAt: "",
+    priority: 2,
   });
 
   const [updatedTask, setUpdatedTask] = useState({
     id: "",
     taskName: "",
     description: "",
-    status: false, // Add this line
-    createdAt: new Date(), // Add this line
+    status: false,
+    priority: 0,
+    createdAt: new Date(),
   });
   const [selectedTaskId, setSelectedTaskId] = useState("");
 
+  // useEffect(() => {
+  //   try {
+  //     const fetchAllTasks = async () => {
+  //       const res = await axios.get("/api/tasks/all");
+  //       setTasksData(res.data.data);
+  //     };
+  //     fetchAllTasks().catch(console.error);
+  //   } catch (error: any) {
+  //     console.log(error.message);
+  //   }
+  // }, [loading]);
+
   useEffect(() => {
     try {
-      const fetchData = async () => {
-        const res = await axios.get("/api/tasks");
+      const fetchTaskById = async () => {
+        const res = await axios.get(`/api/tasks/usertask`);
+        console.log(res.data);
         setTasksData(res.data.data);
       };
-      fetchData().catch(console.error);
+      fetchTaskById().catch(console.error);
     } catch (error: any) {
-      console.log(error.message);
+      console.log("fetchTaskById", error.message);
     }
   }, [loading]);
 
   const createTask = async () => {
     try {
       setLoading(true);
-      const response = await axios.post("/api/tasks", task);
+      const response = await axios.post("/api/tasks/all", task);
       notifications.show({
         title: "Task created",
         message: "",
@@ -107,6 +123,7 @@ const TasksPage = () => {
         taskName: "",
         description: "",
         updatedAt: "",
+        priority: 2,
       });
     } catch (error: any) {
       notifications.show({
@@ -131,9 +148,10 @@ const TasksPage = () => {
         description: updatedTask.description,
         status: updatedTask.status,
         createdAt: updatedTask.createdAt,
+        priority: updatedTask.priority,
       };
 
-      const response = await axios.put("/api/tasks", updatedTaskData);
+      const response = await axios.put("/api/tasks/all", updatedTaskData);
 
       notifications.show({
         title: "Task updated",
@@ -164,7 +182,7 @@ const TasksPage = () => {
   const deleteTask = async (taskId: string) => {
     try {
       setLoading(true);
-      const response = await axios.delete("/api/tasks", {
+      const response = await axios.delete("/api/tasks/all", {
         data: { taskId }, // Send the task ID in the request body
       });
       notifications.show({
@@ -199,14 +217,15 @@ const TasksPage = () => {
               <Table.Th>Status</Table.Th>
               <Table.Th>Task</Table.Th>
               <Table.Th>Description</Table.Th>
+              <Table.Th>Priority</Table.Th>
               <Table.Th>Created at</Table.Th>
               <Table.Th>Updated at</Table.Th>
               <Table.Th />
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
-            {tasksData?.map((data: Task) => (
-              <Table.Tr key={data?.id}>
+            {tasksData?.map((data: Task, key) => (
+              <Table.Tr key={key}>
                 <Table.Td>
                   {data?.status ? (
                     <IconCheck
@@ -238,6 +257,7 @@ const TasksPage = () => {
                         description: data.description,
                         createdAt: data.createdAt,
                         status: data.status,
+                        priority: data.priority,
                       });
                     }}
                   >
@@ -246,6 +266,9 @@ const TasksPage = () => {
                 </Table.Td>
                 <Table.Td>
                   <Text>{data?.description}</Text>
+                </Table.Td>
+                <Table.Td>
+                  <Rating value={data?.priority} count={3} />
                 </Table.Td>
                 <Table.Td>
                   <Text fz="sm">
@@ -273,6 +296,7 @@ const TasksPage = () => {
                           description: data.description,
                           createdAt: data.createdAt,
                           status: data.status,
+                          priority: data.priority,
                         });
                       }}
                     >
@@ -321,6 +345,15 @@ const TasksPage = () => {
                 setTask({ ...task, description: e.target.value })
               }
             />
+            <Group>
+              <Text>Priority</Text>
+              <Rating
+                defaultValue={2}
+                count={3}
+                value={task.priority}
+                onChange={(value) => setTask({ ...task, priority: value })}
+              />
+            </Group>
             <Group justify="flex-end" mt={5}>
               <Button color="gray" onClick={createModalClose}>
                 Cancel
@@ -355,18 +388,30 @@ const TasksPage = () => {
                 setUpdatedTask({ ...updatedTask, description: e.target.value })
               }
             />
-            <Group>
-              <Text>Status</Text>
-              <Switch
-                size="lg"
-                color="gray"
-                onLabel={checkIcon}
-                offLabel=""
-                checked={updatedTask.status}
-                onChange={(e) =>
-                  setUpdatedTask({ ...updatedTask, status: e.target.checked })
-                }
-              />
+            <Group justify="space-between">
+              <Group>
+                <Text>Status</Text>
+                <Switch
+                  size="lg"
+                  color="gray"
+                  onLabel={checkIcon}
+                  offLabel=""
+                  checked={updatedTask.status}
+                  onChange={(e) =>
+                    setUpdatedTask({ ...updatedTask, status: e.target.checked })
+                  }
+                />
+              </Group>
+              <Group>
+                <Text>Priority</Text>
+                <Rating
+                  defaultValue={updatedTask.priority}
+                  count={3}
+                  onChange={(value) =>
+                    setUpdatedTask({ ...updatedTask, priority: value })
+                  }
+                />
+              </Group>
             </Group>
 
             <Group justify="flex-end" mt={5}>

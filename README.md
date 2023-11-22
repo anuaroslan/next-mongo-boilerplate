@@ -24,9 +24,7 @@ pnpm dev
 
 1. Fix header middleware.
 2. Add CMS function to home.
-3. Show task only from user.
-4. Add task group to be seen from selected users.
-5. Add priority to Task.
+3. Add task group to be seen from selected users.
 
 - Add your repo link here
 - # next-mongo-boilerplate

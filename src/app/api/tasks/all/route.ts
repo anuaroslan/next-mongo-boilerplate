@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     const userId = await getDataFromToken(request);
 
     const reqBody = await request.json();
-    const { taskName, description } = reqBody;
+    const { taskName, description, priority } = reqBody;
     const createdAt = new Date().toISOString();
 
     const newTask = new Task({
@@ -35,6 +35,7 @@ export async function POST(request: NextRequest) {
       description,
       createdAt,
       userId,
+      priority,
     });
 
     const savedTask = await newTask.save();
@@ -54,7 +55,7 @@ export async function PUT(request: NextRequest) {
   try {
     // Read the request body only once
     const reqBody = await request.json();
-    const { taskId, taskName, description, status } = reqBody;
+    const { taskId, taskName, description, status, priority } = reqBody;
     const updatedAt = new Date().toISOString();
 
     // Check if the task belongs to the user
@@ -77,6 +78,7 @@ export async function PUT(request: NextRequest) {
     existingTask.description = description;
     existingTask.updatedAt = updatedAt;
     existingTask.status = status;
+    existingTask.priority = priority;
 
     // Save the updated task
     const updatedTask = await existingTask.save();
@@ -91,9 +93,6 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
-
-
-
 
 export async function DELETE(request: NextRequest) {
   try {

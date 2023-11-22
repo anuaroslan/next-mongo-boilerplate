@@ -1,10 +1,6 @@
 import mongoose from "mongoose";
 
 const taskSchema = new mongoose.Schema({
-  status: {
-    type: Boolean,
-    default: false,
-  },
   taskName: {
     type: String,
     required: [true, "Please provide a task"],
@@ -12,6 +8,14 @@ const taskSchema = new mongoose.Schema({
   description: {
     type: String,
     required: [false],
+  },
+  status: {
+    type: Boolean,
+    default: false,
+  },
+  priority: {
+    type: Number,
+    default: 0,
   },
   userId: {
     type: String,

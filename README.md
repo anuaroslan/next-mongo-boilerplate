@@ -25,6 +25,8 @@ pnpm dev
 1. Fix header middleware.
 2. Add CMS function to home.
 3. Add task group to be seen from selected users.
+4. Update status and priority from the table. #
+5. Separate components from page.
 
 - Add your repo link here
 - # next-mongo-boilerplate

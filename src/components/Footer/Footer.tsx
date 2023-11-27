@@ -36,12 +36,15 @@ export function FooterSimple() {
 }
 
 const Footer = styled.div`
-  margin-top: rem(120px);
-  border-top: rem(1px) solid
-  background-color: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5)); 
-  position: absolute;
-  bottom: 0;
   width: 100%;
+  position: relative;
+  bottom: 0;
+  margin-top: rem(120px);
+  border-top: rem(1px) solid;
+  background-color: light-dark(
+    var(--mantine-color-gray-2),
+    var(--mantine-color-dark-5)
+  );
 `;
 const Inner = styled(Container)`
   display: flex;

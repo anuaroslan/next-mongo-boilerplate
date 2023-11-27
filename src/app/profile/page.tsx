@@ -191,7 +191,10 @@ export default function ProfilePage() {
             />
             <Text>Image</Text>
 
-            <FileToImage onImageChange={handleImageChange} />
+            <FileToImage
+              onImageChange={handleImageChange}
+              defaultImage={updatedUser.image}
+            />
 
             <Group justify="flex-end" mt={5}>
               <Button color="gray" onClick={updateModalClose}>

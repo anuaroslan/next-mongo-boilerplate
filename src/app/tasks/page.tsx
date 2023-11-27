@@ -14,23 +14,17 @@ import {
   Anchor,
   rem,
   Switch,
-  Checkbox,
   Rating,
+  Container,
 } from "@mantine/core";
-import {
-  IconCheck,
-  IconCircle,
-  IconLineDashed,
-  IconPencil,
-  IconTrash,
-  IconX,
-} from "@tabler/icons-react";
+import { IconCheck, IconPencil, IconTrash, IconX } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import { useDisclosure as useDisclosureCreate } from "@mantine/hooks";
 import { useDisclosure as useDisclosureUpdate } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import styled from "@emotion/styled";
 
 interface Task {
   id: string;
@@ -205,86 +199,48 @@ const TasksPage = () => {
   };
 
   return (
-    <>
-      <Group justify="space-between">
-        <Title order={1}>Tasks</Title>
-        <Button onClick={createModalOpen}>Add Task</Button>
-      </Group>
-      <Table.ScrollContainer minWidth={800}>
-        <Table verticalSpacing="sm">
-          <Table.Thead>
-            <Table.Tr>
-              <Table.Th>Status</Table.Th>
-              <Table.Th>Task</Table.Th>
-              <Table.Th>Description</Table.Th>
-              <Table.Th>Priority</Table.Th>
-              <Table.Th>Created at</Table.Th>
-              <Table.Th>Updated at</Table.Th>
-              <Table.Th />
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>
-            {tasksData?.map((data: Task, key) => (
-              <Table.Tr key={key}>
-                <Table.Td>
-                  {data?.status ? (
-                    <IconCheck
-                      style={{ width: rem(16), height: rem(16) }}
-                      stroke={1.5}
-                      color="green"
-                    />
-                  ) : (
-                    <IconX
-                      style={{ width: rem(16), height: rem(16) }}
-                      stroke={1.5}
-                      color="gray"
-                    />
-                  )}
-                </Table.Td>
+    <TasksWrapper>
+      <Container size="md">
+        <Group justify="space-between">
+          <Title order={1}>Tasks</Title>
+          <Button onClick={createModalOpen}>Add Task</Button>
+        </Group>
+        <Table.ScrollContainer minWidth={800}>
+          <Table verticalSpacing="sm">
+            <Table.Thead>
+              <Table.Tr>
+                <Table.Th>Status</Table.Th>
+                <Table.Th>Task</Table.Th>
+                <Table.Th>Description</Table.Th>
+                <Table.Th>Priority</Table.Th>
+                <Table.Th>Created at</Table.Th>
+                <Table.Th>Updated at</Table.Th>
+                <Table.Th />
+              </Table.Tr>
+            </Table.Thead>
+            <Table.Tbody>
+              {tasksData?.map((data: Task, key) => (
+                <Table.Tr key={key}>
+                  <Table.Td>
+                    {data?.status ? (
+                      <IconCheck
+                        style={{ width: rem(16), height: rem(16) }}
+                        stroke={1.5}
+                        color="green"
+                      />
+                    ) : (
+                      <IconX
+                        style={{ width: rem(16), height: rem(16) }}
+                        stroke={1.5}
+                        color="gray"
+                      />
+                    )}
+                  </Table.Td>
 
-                <Table.Td>
-                  <Anchor
-                    component="button"
-                    size="sm"
-                    onClick={() => {
-                      // Open update modal and set the selectedTaskId
-                      updateModalOpen();
-                      setSelectedTaskId(data._id);
-                      // Set the updatedTask state with the current task data
-                      setUpdatedTask({
-                        id: data.id,
-                        taskName: data.taskName,
-                        description: data.description,
-                        createdAt: data.createdAt,
-                        status: data.status,
-                        priority: data.priority,
-                      });
-                    }}
-                  >
-                    {data?.taskName}
-                  </Anchor>
-                </Table.Td>
-                <Table.Td>
-                  <Text>{data?.description}</Text>
-                </Table.Td>
-                <Table.Td>
-                  <Rating value={data?.priority} count={3} />
-                </Table.Td>
-                <Table.Td>
-                  <Text fz="sm">
-                    {dayjs(data?.createdAt).format("HH:mm DD MMM YYYY")}
-                  </Text>
-                </Table.Td>
-                <Table.Td>
-                  <Text fz="sm">
-                    {dayjs(data?.updatedAt).format("HH:mm DD MMM YYYY")}
-                  </Text>
-                </Table.Td>
-                <Table.Td>
-                  <Group gap={0} justify="flex-end">
-                    <ActionIcon
-                      variant="subtle"
-                      color="gray"
+                  <Table.Td>
+                    <Anchor
+                      component="button"
+                      size="sm"
                       onClick={() => {
                         // Open update modal and set the selectedTaskId
                         updateModalOpen();
@@ -300,131 +256,182 @@ const TasksPage = () => {
                         });
                       }}
                     >
-                      <IconPencil
-                        style={{ width: rem(16), height: rem(16) }}
-                        stroke={1.5}
-                      />
-                    </ActionIcon>
-                    <ActionIcon
-                      variant="subtle"
-                      color="red"
-                      onClick={() => deleteTask(data?._id)}
-                    >
-                      <IconTrash
-                        style={{ width: rem(16), height: rem(16) }}
-                        stroke={1.5}
-                      />
-                    </ActionIcon>
-                  </Group>
-                </Table.Td>
-              </Table.Tr>
-            ))}
-          </Table.Tbody>
-        </Table>
-      </Table.ScrollContainer>
-      <Modal opened={createModalopened} onClose={createModalClose}>
-        <div>
-          <Text fz="lg" fw={500}>
-            Create a task
-          </Text>
-          <Text fz="xs" c="dimmed" mt={3} mb="xl">
-            Enter the task you want to have
-          </Text>
-          <Stack>
-            <TextInput
-              label="Task Name"
-              placeholder="Eat"
-              value={task.taskName}
-              onChange={(e) => setTask({ ...task, taskName: e.target.value })}
-            />
-            <Textarea
-              label="Description"
-              placeholder="Make yourself a nice steak."
-              value={task.description}
-              onChange={(e) =>
-                setTask({ ...task, description: e.target.value })
-              }
-            />
-            <Group>
-              <Text>Priority</Text>
-              <Rating
-                defaultValue={2}
-                count={3}
-                value={task.priority}
-                onChange={(value) => setTask({ ...task, priority: value })}
+                      {data?.taskName}
+                    </Anchor>
+                  </Table.Td>
+                  <Table.Td>
+                    <Text>{data?.description}</Text>
+                  </Table.Td>
+                  <Table.Td>
+                    <Rating value={data?.priority} count={3} />
+                  </Table.Td>
+                  <Table.Td>
+                    <Text fz="sm">
+                      {dayjs(data?.createdAt).format("HH:mm DD MMM YYYY")}
+                    </Text>
+                  </Table.Td>
+                  <Table.Td>
+                    <Text fz="sm">
+                      {dayjs(data?.updatedAt).format("HH:mm DD MMM YYYY")}
+                    </Text>
+                  </Table.Td>
+                  <Table.Td>
+                    <Group gap={0} justify="flex-end">
+                      <ActionIcon
+                        variant="subtle"
+                        color="gray"
+                        onClick={() => {
+                          // Open update modal and set the selectedTaskId
+                          updateModalOpen();
+                          setSelectedTaskId(data._id);
+                          // Set the updatedTask state with the current task data
+                          setUpdatedTask({
+                            id: data.id,
+                            taskName: data.taskName,
+                            description: data.description,
+                            createdAt: data.createdAt,
+                            status: data.status,
+                            priority: data.priority,
+                          });
+                        }}
+                      >
+                        <IconPencil
+                          style={{ width: rem(16), height: rem(16) }}
+                          stroke={1.5}
+                        />
+                      </ActionIcon>
+                      <ActionIcon
+                        variant="subtle"
+                        color="red"
+                        onClick={() => deleteTask(data?._id)}
+                      >
+                        <IconTrash
+                          style={{ width: rem(16), height: rem(16) }}
+                          stroke={1.5}
+                        />
+                      </ActionIcon>
+                    </Group>
+                  </Table.Td>
+                </Table.Tr>
+              ))}
+            </Table.Tbody>
+          </Table>
+        </Table.ScrollContainer>
+        <Modal opened={createModalopened} onClose={createModalClose}>
+          <div>
+            <Text fz="lg" fw={500}>
+              Create a task
+            </Text>
+            <Text fz="xs" c="dimmed" mt={3} mb="xl">
+              Enter the task you want to have
+            </Text>
+            <Stack>
+              <TextInput
+                label="Task Name"
+                placeholder="Eat"
+                value={task.taskName}
+                onChange={(e) => setTask({ ...task, taskName: e.target.value })}
               />
-            </Group>
-            <Group justify="flex-end" mt={5}>
-              <Button color="gray" onClick={createModalClose}>
-                Cancel
-              </Button>
-              <Button onClick={createTask}>Add Task</Button>
-            </Group>
-          </Stack>
-        </div>
-      </Modal>
-      <Modal opened={updateModalopened} onClose={updateModalClose}>
-        <div>
-          <Text fz="lg" fw={500}>
-            Update a task
-          </Text>
-          <Text fz="xs" c="dimmed" mt={3} mb="xl">
-            Enter the task you want to have
-          </Text>
-          <Stack>
-            <TextInput
-              label="Task Name"
-              placeholder="Eat"
-              value={updatedTask.taskName}
-              onChange={(e) =>
-                setUpdatedTask({ ...updatedTask, taskName: e.target.value })
-              }
-            />
-            <Textarea
-              label="Description"
-              placeholder="Make yourself a nice steak."
-              value={updatedTask.description}
-              onChange={(e) =>
-                setUpdatedTask({ ...updatedTask, description: e.target.value })
-              }
-            />
-            <Group justify="space-between">
-              <Group>
-                <Text>Status</Text>
-                <Switch
-                  size="lg"
-                  color="gray"
-                  onLabel={checkIcon}
-                  offLabel=""
-                  checked={updatedTask.status}
-                  onChange={(e) =>
-                    setUpdatedTask({ ...updatedTask, status: e.target.checked })
-                  }
-                />
-              </Group>
+              <Textarea
+                label="Description"
+                placeholder="Make yourself a nice steak."
+                value={task.description}
+                onChange={(e) =>
+                  setTask({ ...task, description: e.target.value })
+                }
+              />
               <Group>
                 <Text>Priority</Text>
                 <Rating
-                  defaultValue={updatedTask.priority}
+                  defaultValue={2}
                   count={3}
-                  onChange={(value) =>
-                    setUpdatedTask({ ...updatedTask, priority: value })
-                  }
+                  value={task.priority}
+                  onChange={(value) => setTask({ ...task, priority: value })}
                 />
               </Group>
-            </Group>
+              <Group justify="flex-end" mt={5}>
+                <Button color="gray" onClick={createModalClose}>
+                  Cancel
+                </Button>
+                <Button onClick={createTask}>Add Task</Button>
+              </Group>
+            </Stack>
+          </div>
+        </Modal>
+        <Modal opened={updateModalopened} onClose={updateModalClose}>
+          <div>
+            <Text fz="lg" fw={500}>
+              Update a task
+            </Text>
+            <Text fz="xs" c="dimmed" mt={3} mb="xl">
+              Enter the task you want to have
+            </Text>
+            <Stack>
+              <TextInput
+                label="Task Name"
+                placeholder="Eat"
+                value={updatedTask.taskName}
+                onChange={(e) =>
+                  setUpdatedTask({ ...updatedTask, taskName: e.target.value })
+                }
+              />
+              <Textarea
+                label="Description"
+                placeholder="Make yourself a nice steak."
+                value={updatedTask.description}
+                onChange={(e) =>
+                  setUpdatedTask({
+                    ...updatedTask,
+                    description: e.target.value,
+                  })
+                }
+              />
+              <Group justify="space-between">
+                <Group>
+                  <Text>Status</Text>
+                  <Switch
+                    size="lg"
+                    color="gray"
+                    onLabel={checkIcon}
+                    offLabel=""
+                    checked={updatedTask.status}
+                    onChange={(e) =>
+                      setUpdatedTask({
+                        ...updatedTask,
+                        status: e.target.checked,
+                      })
+                    }
+                  />
+                </Group>
+                <Group>
+                  <Text>Priority</Text>
+                  <Rating
+                    defaultValue={updatedTask.priority}
+                    count={3}
+                    onChange={(value) =>
+                      setUpdatedTask({ ...updatedTask, priority: value })
+                    }
+                  />
+                </Group>
+              </Group>
 
-            <Group justify="flex-end" mt={5}>
-              <Button color="gray" onClick={updateModalClose}>
-                Cancel
-              </Button>
-              <Button onClick={updateTask}>Update Task</Button>
-            </Group>
-          </Stack>
-        </div>
-      </Modal>
-    </>
+              <Group justify="flex-end" mt={5}>
+                <Button color="gray" onClick={updateModalClose}>
+                  Cancel
+                </Button>
+                <Button onClick={updateTask}>Update Task</Button>
+              </Group>
+            </Stack>
+          </div>
+        </Modal>
+      </Container>
+    </TasksWrapper>
   );
 };
 
 export default TasksPage;
+
+const TasksWrapper = styled.div`
+  height: 100%;
+  margin-top: 5rem;
+`;

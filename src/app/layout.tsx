@@ -6,6 +6,7 @@ import { HeaderMegaMenu } from "@/components/Header/HeaderMegaMenu";
 import { Notifications } from "@mantine/notifications";
 import "@mantine/notifications/styles.css";
 import { FooterSimple } from "@/components/Footer/Footer";
+import "@mantine/dates/styles.css";
 
 export const metadata = {
   title: "Mantine Next.js template",
@@ -26,9 +27,10 @@ export default function RootLayout({ children }: { children: any }) {
       <body>
         <MantineProvider theme={theme}>
           <Notifications />
-
-          <HeaderMegaMenu />
-          <Container size={"md"}>{children}</Container>
+          <HeaderMegaMenu myCookieValue={undefined} />
+          {/* <Container size={"md"}> */}
+          {children}
+          {/* </Container> */}
           <FooterSimple />
         </MantineProvider>
       </body>

@@ -20,8 +20,7 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { MantineLogo } from "@mantine/ds";
-
-
+import { useRouter } from "next/navigation";
 import {
   IconNotification,
   IconCode,
@@ -33,7 +32,6 @@ import {
 } from "@tabler/icons-react";
 import classes from "./HeaderMegaMenu.module.css";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import axios from "axios";
 
 const mockdata = [
@@ -124,7 +122,7 @@ export function HeaderMegaMenu({ myCookieValue }: { myCookieValue: any }) {
   ));
 
   return (
-    <Box pb={120} mt={15}>
+    <Box mt={0}>
       <header className={classes.header}>
         <Group justify="space-between" h="100%">
           <MantineLogo size={30} onClick={() => router.push("/")} />
@@ -202,10 +200,15 @@ export function HeaderMegaMenu({ myCookieValue }: { myCookieValue: any }) {
             </Group>
           ) : (
             <Group visibleFrom="sm">
-              <Button variant="default" onClick={() => router.push("/login")}>
+              <Button
+                variant="default"
+                onClick={() => {
+                  router.push("/login");
+                }}
+              >
                 Log in
               </Button>
-              <Button onClick={onLogout}>Sign up</Button>
+              <Button onClick={() => router.push("/signup")}>Sign up</Button>
             </Group>
           )}
 
@@ -257,8 +260,10 @@ export function HeaderMegaMenu({ myCookieValue }: { myCookieValue: any }) {
           <Divider my="sm" />
 
           <Group justify="center" grow pb="xl" px="md">
-            <Button variant="default">Log in</Button>
-            <Button>Sign up</Button>
+            <Button variant="default" onClick={() => router.push("/login")}>
+              Log in
+            </Button>
+            <Button onClick={() => router.push("/signup")}>Sign up</Button>
           </Group>
         </ScrollArea>
       </Drawer>

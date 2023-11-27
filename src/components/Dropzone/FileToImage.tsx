@@ -5,9 +5,13 @@ import { Dropzone } from "@mantine/dropzone";
 
 interface FileToImageProps {
   onImageChange: (image: string | null) => void;
+  defaultImage?: string | null;
 }
 
-const FileToImage: React.FC<FileToImageProps> = ({ onImageChange }) => {
+const FileToImage: React.FC<FileToImageProps> = ({
+  onImageChange,
+  defaultImage,
+}) => {
   const [imageSrc, setImageSrc] = useState<string | null>(null);
 
   const handleDrop = (files: File[]) => {
@@ -43,7 +47,17 @@ const FileToImage: React.FC<FileToImageProps> = ({ onImageChange }) => {
         {/* Content to display inside the dropzone if needed */}
         <Group justify="center" my={20}>
           <Text>Drop your file here or click to select a file</Text>
-          {imageSrc && <Avatar src={imageSrc} alt="Converted" size={"xl"} />}
+          {imageSrc ? (
+            <>
+              <Avatar src={imageSrc} alt="Converted" size={"xl"} />
+            </>
+          ) : (
+            <>
+              {defaultImage && (
+                <Avatar src={defaultImage} alt="Converted" size={"xl"} />
+              )}
+            </>
+          )}
         </Group>
       </Dropzone>
     </div>

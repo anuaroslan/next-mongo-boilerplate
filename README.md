@@ -22,9 +22,8 @@ pnpm dev
 
 ## Todo
 
-1. Fix header middleware.
-3. Add task group to be seen from selected users.
-5. Separate components from page.
+
+1. Add task group to be seen from selected users.
 
 - Add your repo link here
 - # next-mongo-boilerplate

@@ -202,7 +202,7 @@ const TasksPage = () => {
       );
 
       notifications.show({
-        title: "Task completed",
+        title: "Status updated",
         message: "",
       });
     } catch (error: any) {

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import {
@@ -14,14 +14,13 @@ import {
 } from "@mantine/core";
 import styled from "@emotion/styled";
 import { notifications } from "@mantine/notifications";
-import { useDispatch, useSelector } from "react-redux";
-import { setLoggedStatus } from "@/store/slices/user";
+import { useDispatch } from "react-redux";
+import { setUserAuth } from "@/store/slices/user";
+import classes from "./login.module.css";
 
 const LoginPage = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-
-  // Using useSelector to get the isLogged state
 
   const [user, setUser] = useState({
     email: "",
@@ -33,7 +32,8 @@ const LoginPage = () => {
     try {
       setLoading(true);
       const response = await axios.post("/api/users/login", user);
-      dispatch(setLoggedStatus(true));
+
+      dispatch(setUserAuth(response.data.data.username));
 
       console.log("Login success", response.data);
       console.log("Response", response);
@@ -55,53 +55,45 @@ const LoginPage = () => {
   };
 
   return (
-    <>
-      <Wrapper>
-        <Paper radius={0} p={30}>
-          <Title order={2} ta="center" mt="md" mb={50}>
-            Welcome back to Mantine!
-          </Title>
+    <Wrapper>
+      <Paper className={classes.form} radius={0} p={30}>
+        <Title order={2} ta="center" mt="md" mb={50}>
+          Welcome back to Mantine!
+        </Title>
 
-          <TextInput
-            label="Email address"
-            placeholder="hello@gmail.com"
-            size="md"
-            value={user.email}
-            onChange={(e) => setUser({ ...user, email: e.target.value })}
-          />
-          <PasswordInput
-            label="Password"
-            placeholder="Your password"
-            mt="md"
-            size="md"
-            value={user.password}
-            onChange={(e) => setUser({ ...user, password: e.target.value })}
-          />
-          {/* <Checkbox label="Keep me logged in" mt="xl" size="md" /> */}
-          <Button
-            fullWidth
-            mt="xl"
-            size="md"
-            loading={loading}
-            onClick={onLogin}
-          >
-            Login
-          </Button>
+        <TextInput
+          label="Email address"
+          placeholder="hello@gmail.com"
+          size="md"
+          value={user.email}
+          onChange={(e) => setUser({ ...user, email: e.target.value })}
+        />
+        <PasswordInput
+          label="Password"
+          placeholder="Your password"
+          mt="md"
+          size="md"
+          value={user.password}
+          onChange={(e) => setUser({ ...user, password: e.target.value })}
+        />
+        {/* <Checkbox label="Keep me logged in" mt="xl" size="md" /> */}
+        <Button fullWidth mt="xl" size="md" loading={loading} onClick={onLogin}>
+          Login
+        </Button>
 
-          <Text ta="center" mt="md">
-            <Anchor<"a"> href="/forgotpassword" fw={700}>
-              Forgotten password?
-            </Anchor>
-          </Text>
-          <Text ta="center" mt="sm">
-            Don&apos;t have an account?{" "}
-            <Anchor<"a"> href="/signup" fw={700}>
-              Register
-            </Anchor>
-          </Text>
-        </Paper>
-      </Wrapper>
-    </>
+        <Text ta="center" mt="md">
+          <Anchor<"a"> href="/forgotpassword" fw={700}>
+            Forgotten password?
+          </Anchor>
+        </Text>
+        <Text ta="center" mt="sm">
+          Don&apos;t have an account?{" "}
+          <Anchor<"a"> href="/signup" fw={700}>
+            Register
+          </Anchor>
+        </Text>
+      </Paper>
+    </Wrapper>
   );
 };
 

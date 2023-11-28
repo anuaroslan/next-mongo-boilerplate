@@ -16,6 +16,7 @@ import {
   Button,
   Anchor,
   Text,
+  Container,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 
@@ -88,7 +89,7 @@ const ResetPasswordPage = () => {
   };
 
   return (
-    <>
+    <Container size={"md"} style={{ height: "90vh" }}>
       <Wrapper>
         <Paper radius={0} p={30}>
           <Title order={2} ta="center" mt="md" mb={0}>
@@ -136,7 +137,7 @@ const ResetPasswordPage = () => {
           </Text>
         </Paper>
       </Wrapper>
-    </>
+    </Container>
   );
 };
 

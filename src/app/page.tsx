@@ -1,7 +1,6 @@
 "use client";
 
 import { ColorSchemeToggle } from "@/components/ColorSchemeToggle/ColorSchemeToggle";
-import { Welcome } from "@/components/Welcome/Welcome";
 import {
   Button,
   Container,
@@ -11,11 +10,6 @@ import {
   Group,
   Stack,
   Grid,
-  Card,
-  RingProgress,
-  Image,
-  Divider,
-  Rating,
 } from "@mantine/core";
 import styled from "@emotion/styled";
 import RunningCard from "@/components/RunningCard/RunningCard";
@@ -46,7 +40,6 @@ export default function Home() {
       const fetchEvents = async () => {
         const res = await axios.get(`/api/events`);
         console.log(res.data);
-
         setEventsData(res.data.data);
       };
       fetchEvents().catch(console.error);

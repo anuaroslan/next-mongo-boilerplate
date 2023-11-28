@@ -34,7 +34,8 @@ import classes from "./HeaderMegaMenu.module.css";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { setLoggedStatus } from "@/store/slices/user";
+import { resetUserAuth } from "@/store/slices/user";
+import Link from "next/link";
 
 const mockdata = [
   {
@@ -74,34 +75,19 @@ export function HeaderMegaMenu() {
   const router = useRouter();
   const [drawerOpened, setDrawerOpened] = useState(false);
   const [linksOpened, setLinksOpened] = useState(false);
-  const [data, setData] = useState<any>("");
-  // const [isLogged, setIsLogged] = useState(false);
   const dispatch = useDispatch();
 
-  // Using useSelector to get the isLogged state
   const isLogged = useSelector((state: any) => state.user.isLogged);
+  const userData = useSelector((state: any) => state.user.userName);
 
-  useEffect(() => {
-    try {
-      const fetchData = async () => {
-        const res = await axios.get("/api/users/me");
-        setData(res.data.data);
-        dispatch(setLoggedStatus(true));
-
-        // setIsLogged(true);
-      };
-      fetchData();
-    } catch (error: any) {
-      // setIsLogged(false);
-      console.log(error.message);
-    }
-  }, [dispatch, isLogged]);
+  console.log("isLogged State:", isLogged);
+  console.log("User State:", userData);
 
   const onLogout = async () => {
     try {
       await axios.get("/api/users/logout");
-      // setIsLogged(false);
-      dispatch(setLoggedStatus(false));
+      dispatch(resetUserAuth());
+      // dispatch(setLoggedStatus(false));
 
       router.push("/login");
     } catch (error: any) {
@@ -137,9 +123,9 @@ export function HeaderMegaMenu() {
           <MantineLogo size={30} onClick={() => router.push("/")} />
 
           <Group h="100%" gap={0} visibleFrom="sm">
-            <a href="/" className={classes.link}>
+            <Link href="/" className={classes.link}>
               Home
-            </a>
+            </Link>
             <HoverCard
               width={600}
               position="bottom"
@@ -201,7 +187,7 @@ export function HeaderMegaMenu() {
           {isLogged ? (
             <Group visibleFrom="sm">
               <Button onClick={() => router.push("/profile")}>
-                {data.username}
+                {userData}
               </Button>
               <Button variant="default" onClick={onLogout}>
                 Log Out

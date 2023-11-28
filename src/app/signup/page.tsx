@@ -11,6 +11,7 @@ import {
   TextInput,
   Title,
   Text,
+  Container,
 } from "@mantine/core";
 import styled from "@emotion/styled";
 import { notifications } from "@mantine/notifications";
@@ -48,7 +49,7 @@ const SignUpPage = () => {
   };
 
   return (
-    <>
+    <Container size={"md"} style={{ height: "90vh" }}>
       <Wrapper>
         <Paper radius={0} p={30}>
           <Title order={2} ta="center" mt="md" mb={50}>
@@ -96,7 +97,7 @@ const SignUpPage = () => {
           </Text>
         </Paper>
       </Wrapper>
-    </>
+    </Container>
   );
 };
 

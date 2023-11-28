@@ -1,17 +1,40 @@
 // userSlice.js
+
 import { createSlice } from "@reduxjs/toolkit";
+
+const getUserDataFromLocalStorage =
+  localStorage.getItem("userName") !== null
+    ? JSON.parse(localStorage.getItem("userName")!)
+    : "";
+
+const getIsLoggedFromLocalStorage =
+  localStorage.getItem("isLogged") !== null
+    ? JSON.parse(localStorage.getItem("isLogged")!)
+    : false;
 
 const userSlice = createSlice({
   name: "user",
   initialState: {
-    isLogged: false,
+    isLogged: getIsLoggedFromLocalStorage,
+    userName: getUserDataFromLocalStorage,
   },
   reducers: {
-    setLoggedStatus: (state, action) => {
-      state.isLogged = action.payload;
+    setUserAuth: (state, action) => {
+      state.userName = action.payload;
+      state.isLogged = true;
+
+      localStorage.setItem("userName", JSON.stringify(action.payload));
+      localStorage.setItem("isLogged", "true");
+    },
+    resetUserAuth: (state) => {
+      state.userName = null;
+      state.isLogged = false;
+
+      localStorage.removeItem("userName");
+      localStorage.removeItem("isLogged");
     },
   },
 });
 
-export const { setLoggedStatus } = userSlice.actions;
+export const { setUserAuth, resetUserAuth } = userSlice.actions;
 export default userSlice.reducer;

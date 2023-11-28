@@ -25,8 +25,8 @@ import { IconPencil } from "@tabler/icons-react";
 
 import styled from "@emotion/styled";
 import FileToImage from "@/components/Dropzone/FileToImage";
-import { setLoggedStatus } from "@/store/slices/user";
 import { useDispatch } from "react-redux";
+import { resetUserAuth } from "@/store/slices/user";
 
 interface User {
   id: string;
@@ -73,7 +73,9 @@ export default function ProfilePage() {
 
       toast.success("Logout successful");
       router.push("/login");
-      dispatch(setLoggedStatus(false));
+      dispatch(resetUserAuth());
+
+      // dispatch(setLoggedStatus(false));
     } catch (error: any) {
       console.log(error.message);
       toast.error(error.message);

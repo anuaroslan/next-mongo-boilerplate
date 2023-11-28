@@ -17,6 +17,7 @@ import {
   rem,
   Box,
   Button,
+  Container,
 } from "@mantine/core";
 import { IconArrowLeft } from "@tabler/icons-react";
 
@@ -61,7 +62,7 @@ const ForgotPasswordPage = () => {
   };
 
   return (
-    <>
+    <Container size={"md"} style={{ height: "90vh" }}>
       <Wrapper>
         <StyledTitle ta="center">Forgot your password?</StyledTitle>
         <Text c="dimmed" fz="sm" ta="center">
@@ -94,7 +95,7 @@ const ForgotPasswordPage = () => {
           </Group>
         </Paper>
       </Wrapper>
-    </>
+    </Container>
   );
 };
 

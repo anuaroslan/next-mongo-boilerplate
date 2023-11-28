@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 
+
 connect();
 
 export async function POST(request: NextRequest) {
@@ -43,9 +44,16 @@ export async function POST(request: NextRequest) {
     const response = NextResponse.json({
       message: "Login successful",
       success: true,
+      data: user,
     });
+
+    // Set cookie expiration to 1 day (24 hours)
+    const expirationDate = new Date();
+    expirationDate.setDate(expirationDate.getDate() + 1);
+
     response.cookies.set("token", token, {
       httpOnly: true,
+      expires: expirationDate,
     });
 
     return response;

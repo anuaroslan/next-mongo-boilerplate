@@ -25,6 +25,8 @@ import { IconPencil } from "@tabler/icons-react";
 
 import styled from "@emotion/styled";
 import FileToImage from "@/components/Dropzone/FileToImage";
+import { setLoggedStatus } from "@/store/slices/user";
+import { useDispatch } from "react-redux";
 
 interface User {
   id: string;
@@ -42,6 +44,7 @@ export default function ProfilePage() {
   const [userData, setUserData] = useState<User[]>([]);
   const [selectedUserId, setSelectedUserId] = useState("");
   const [imageSrc, setImageSrc] = useState<string | null>(null);
+  const dispatch = useDispatch();
 
   const [
     updateModalopened,
@@ -67,8 +70,10 @@ export default function ProfilePage() {
   const logout = async () => {
     try {
       await axios.get("/api/users/logout");
+
       toast.success("Logout successful");
       router.push("/login");
+      dispatch(setLoggedStatus(false));
     } catch (error: any) {
       console.log(error.message);
       toast.error(error.message);
@@ -129,8 +134,14 @@ export default function ProfilePage() {
 
   return (
     <>
-      <Container size={"xs"}>
-        <Paper radius="md" withBorder p="lg" bg="var(--mantine-color-body)">
+      <Container size={"xs"} style={{ height: "100vh" }}>
+        <Paper
+          radius="md"
+          withBorder
+          p="lg"
+          mt={100}
+          bg="var(--mantine-color-body)"
+        >
           <Avatar src={data.image} size={120} radius={120} mx="auto" />
           <Group justify="center" align="center" mt="md">
             <Text ta="center" fz="lg" fw={500}>
@@ -164,12 +175,26 @@ export default function ProfilePage() {
             {dayjs(data.createdAt).format("DD MMM YYYY")}
           </Text>
 
-          <Button fullWidth mt="md" onClick={() => router.push("/tasks")}>
-            View task
-          </Button>
-          <Flex mt={10} justify="center">
-            <Anchor onClick={logout}>Log out</Anchor>
-          </Flex>
+          <Stack mt={10}>
+            <Button fullWidth onClick={() => router.push("/tasks")}>
+              View task
+            </Button>
+            {data.isAdmin && (
+              <Button
+                fullWidth
+                variant="light"
+                color="violet"
+                onClick={() => router.push("/dashboard/events")}
+              >
+                Manage Events
+              </Button>
+            )}
+            <Flex justify="center">
+              <Button onClick={logout} color="dark" variant="default">
+                Log out
+              </Button>
+            </Flex>
+          </Stack>
         </Paper>
       </Container>
       <Modal opened={updateModalopened} onClose={updateModalClose}>

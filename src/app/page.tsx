@@ -94,15 +94,17 @@ export default function Home() {
             {eventsData.map((item, id) => {
               return (
                 <Grid.Col span={4} key={id}>
-                  <RunningCard
-                    title={item.title}
-                    difficulty={item.difficulty}
-                    image={item.image}
-                    description={item.description}
-                    attendees={item.attendees.length}
-                    location={item.location}
-                    date={item.date}
-                  />
+                  {item.isActive && (
+                    <RunningCard
+                      title={item.title}
+                      difficulty={item.difficulty}
+                      image={item.image}
+                      description={item.description}
+                      attendees={item.attendees.length}
+                      location={item.location}
+                      date={item.date}
+                    />
+                  )}
                 </Grid.Col>
               );
             })}

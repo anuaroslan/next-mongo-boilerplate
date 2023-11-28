@@ -14,9 +14,15 @@ import {
 } from "@mantine/core";
 import styled from "@emotion/styled";
 import { notifications } from "@mantine/notifications";
+import { useDispatch, useSelector } from "react-redux";
+import { setLoggedStatus } from "@/store/slices/user";
 
 const LoginPage = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
+
+  // Using useSelector to get the isLogged state
+
   const [user, setUser] = useState({
     email: "",
     password: "",
@@ -27,6 +33,8 @@ const LoginPage = () => {
     try {
       setLoading(true);
       const response = await axios.post("/api/users/login", user);
+      dispatch(setLoggedStatus(true));
+
       console.log("Login success", response.data);
       console.log("Response", response);
       notifications.show({

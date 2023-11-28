@@ -33,6 +33,8 @@ import {
 import classes from "./HeaderMegaMenu.module.css";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { setLoggedStatus } from "@/store/slices/user";
 
 const mockdata = [
   {
@@ -67,33 +69,40 @@ const mockdata = [
   },
 ];
 
-export function HeaderMegaMenu({ myCookieValue }: { myCookieValue: any }) {
+export function HeaderMegaMenu() {
   const theme = useMantineTheme();
   const router = useRouter();
   const [drawerOpened, setDrawerOpened] = useState(false);
   const [linksOpened, setLinksOpened] = useState(false);
   const [data, setData] = useState<any>("");
-  const [isLogged, setIsLogged] = useState(false);
+  // const [isLogged, setIsLogged] = useState(false);
+  const dispatch = useDispatch();
+
+  // Using useSelector to get the isLogged state
+  const isLogged = useSelector((state: any) => state.user.isLogged);
 
   useEffect(() => {
     try {
       const fetchData = async () => {
         const res = await axios.get("/api/users/me");
-
         setData(res.data.data);
-        setIsLogged(true);
+        dispatch(setLoggedStatus(true));
+
+        // setIsLogged(true);
       };
-      fetchData().catch(console.error);
+      fetchData();
     } catch (error: any) {
-      setIsLogged(false);
+      // setIsLogged(false);
       console.log(error.message);
     }
-  }, [isLogged, setIsLogged]);
+  }, [dispatch, isLogged]);
 
   const onLogout = async () => {
     try {
       await axios.get("/api/users/logout");
-      setIsLogged(false);
+      // setIsLogged(false);
+      dispatch(setLoggedStatus(false));
+
       router.push("/login");
     } catch (error: any) {
       console.log(error.message);

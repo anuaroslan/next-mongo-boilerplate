@@ -22,8 +22,7 @@ pnpm dev
 
 ## Todo
 
-
-1. Add task group to be seen from selected users.
+1. isAdmin Middleware
 
 - Add your repo link here
 - # next-mongo-boilerplate

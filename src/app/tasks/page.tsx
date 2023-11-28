@@ -173,6 +173,49 @@ const TasksPage = () => {
     }
   };
 
+  const toggleStatus = async (taskId: string) => {
+    try {
+      // Assuming taskId is defined
+      const taskToUpdate = tasksData.find((task) => task._id === taskId);
+      if (!taskToUpdate) {
+        console.error("Task not found");
+        return;
+      }
+
+      const updatedTaskData = {
+        taskId,
+        taskName: taskToUpdate.taskName,
+        description: taskToUpdate.description,
+        status: !taskToUpdate.status, // Toggle the status
+        createdAt: taskToUpdate.createdAt,
+        priority: taskToUpdate.priority,
+      };
+
+      // Make the API call to update the task status
+      const response = await axios.put("/api/tasks/all", updatedTaskData);
+
+      // Update the tasksData state with the updated task
+      setTasksData((prevTasks) =>
+        prevTasks.map((task) =>
+          task._id === taskId ? response.data.updatedTask : task
+        )
+      );
+
+      notifications.show({
+        title: "Task completed",
+        message: "",
+      });
+    } catch (error: any) {
+      notifications.show({
+        title: "Failed",
+        message: "Please try again.",
+        color: "red",
+      });
+
+      console.error("Task status update failed", error.message);
+    }
+  };
+
   const deleteTask = async (taskId: string) => {
     try {
       setLoading(true);
@@ -221,7 +264,7 @@ const TasksPage = () => {
             <Table.Tbody>
               {tasksData?.map((data: Task, key) => (
                 <Table.Tr key={key}>
-                  <Table.Td>
+                  <Table.Td onClick={() => toggleStatus(data._id)}>
                     {data?.status ? (
                       <IconCheck
                         style={{ width: rem(16), height: rem(16) }}

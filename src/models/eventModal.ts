@@ -23,7 +23,6 @@ const eventSchema = new mongoose.Schema({
     required: true,
   },
   attendees: [String],
-
   isActive: {
     type: Boolean,
   },

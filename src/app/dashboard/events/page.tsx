@@ -59,7 +59,6 @@ const EventsPage = () => {
   const [loading, setLoading] = useState(false);
   const [eventsData, setEventsData] = useState<Event[]>([]);
   const [selectedEventId, setSelectedEventId] = useState("");
-  const [selectedDate, setSelectedDate] = useState<Date>();
 
   const [
     createModalopened,
